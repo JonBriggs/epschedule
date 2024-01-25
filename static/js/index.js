@@ -26,6 +26,14 @@ function renderGitHubCommits() {
   });
   document.getElementById("GHUpdateText").innerHTML = updated;
 }
+function getCourseByName(studentClasses, name) {
+  for (var course = 0; course < studentClasses[0].length; course++) {// default to fall tri since adv doesnt change
+    if (studentClasses[0][course]["name"] == "Advisory - US") {
+      return studentClasses[0][course];
+    }
+  }
+  return null;
+}
 function signOut() {
   sendPostMessage("logout", reload);
 }
@@ -453,6 +461,7 @@ function renderStudent(studentObj) {
   var popupContainer = document.getElementById("popupContainer");
   var email = studentObj.email;
   email = email.toLowerCase();
+  var advisoryloc = getCourseByName(studentObj.classes, "Advisory")
   if (studentObj.grade) {
     var grade = studentObj.grade + "th Grade";
     var name = studentObj.preferred_name ? studentObj.preferred_name : studentObj.firstname;
@@ -460,6 +469,11 @@ function renderStudent(studentObj) {
     var advisoryTag = '<p><iron-icon icon="icons:perm-identity"></iron-icon>' +
       "Advisor: " + studentObj.advisor.charAt(1).toUpperCase() +
       studentObj.advisor.slice(2) + "</p>";
+    var advisoryLocationTag = "";
+    if (advisoryloc) {
+      advisoryLocationTag = '<p><iron-icon icon="icons:room"></iron-icon>' +
+        "Advisory Room: " + advisoryloc.room + "</p>";
+    }
   } else {
     var grade = "";
     var name = studentObj.preferred_name ? studentObj.preferred_name : studentObj.firstname;
@@ -467,6 +481,11 @@ function renderStudent(studentObj) {
     var officeTag = '<p><iron-icon icon="icons:home"></iron-icon>' +
       "Office: " + studentObj.office + "</p>";
     var advisoryTag = "";
+    var advisoryLocationTag = "";
+    if (advisoryloc) {
+      advisoryLocationTag = '<p><iron-icon icon="icons:room"></iron-icon>' +
+        "Advisory Room: " + advisoryloc.room + "</p>";
+    }
   }
   var innerHTMLStyle;
   // Gets the CSS style
@@ -490,6 +509,7 @@ function renderStudent(studentObj) {
     "</span></a></p>" +
     officeTag +
     advisoryTag +
+    advisoryLocationTag +
     "</div></div></paper-material>" +
     '<schedule-lite id="studentschedule"></schedule-lite>' +
     "</div>";
